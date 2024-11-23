@@ -8,7 +8,7 @@ use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Exception\Http\BadRequest\MissingRequiredRequestParameterException;
-use App\Exception\Http\NotFound\ContentNotFoundHttpException;
+use App\Exception\Http\NotFound\ObjectNotFoundHttpException;
 
 class ArticleProvider implements ProviderInterface
 {
@@ -31,11 +31,11 @@ class ArticleProvider implements ProviderInterface
         try {
             $article = $this->articleService->getArticleByAlias($alias);
         } catch (\Throwable $e) {
-            throw new ContentNotFoundHttpException($e->getMessage() ?? 'Failed to get article');
+            throw new ObjectNotFoundHttpException($e->getMessage() ?? 'Failed to get article');
         }
 
         if (!$article || !$article->isActive()) {
-            throw new ContentNotFoundHttpException(sprintf('Article %s not found', $alias));
+            throw new ObjectNotFoundHttpException(sprintf('Article %s not found', $alias));
         }
 
         return ArticleResponse::create(
