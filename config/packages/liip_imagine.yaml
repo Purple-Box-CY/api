@@ -1,0 +1,29 @@
+# Documentation on how to configure the bundle can be found at: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
+liip_imagine:
+    # valid drivers options include "gd" or "gmagick" or "imagick"
+    driver: "gd"
+    filter_sets:
+
+        # name our filter set "my_thumb_filter"
+        avatar_thumb_filter:
+            filters:
+
+                # use and setup the "thumbnail" filter
+                thumbnail:
+
+                    # set the thumbnail size to "32x32" pixels
+                    size: [80, 80]
+
+                    # crop the input image, if required
+                    mode: outbound
+        image_profile_thumb_filter:
+            filters:
+
+                # use and setup the "thumbnail" filter
+                thumbnail:
+
+                    # set the thumbnail size to "32x32" pixels
+                    size: [375, 185]
+
+                    # crop the input image, if required
+                    mode: outbound

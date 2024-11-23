@@ -1,0 +1,18 @@
+notification:
+    vote: >-
+        {count, select,
+            1     {{user} send you {votes_count} vote.}
+            other {{user} send you {votes_count} votes.}
+        }
+    buyer_votes_with_mystery_box: >-
+        {count, select,
+            1     {You have successfully purchased {votes_count} vote. {creator_name} sent you a mystery box in a private message}
+            other {You have successfully purchased {votes_count} votes. {creator_name} sent you a mystery box in a private message}
+        }
+    buyer_votes_without_mystery_box: >-
+        {count, select,
+            1     {You have successfully purchased {votes_count} vote. {creator_name} will soon create a mystery box and send it to you in a private message}
+            other {You have successfully purchased {votes_count} votes. {creator_name} will soon create a mystery box and send it to you in a private message}
+        }
+    new_follower: >-
+        {user} started following you.

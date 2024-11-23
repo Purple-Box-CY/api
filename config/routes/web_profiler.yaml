@@ -1,0 +1,21 @@
+when@dev:
+    web_profiler_wdt:
+        resource: '@WebProfilerBundle/Resources/config/routing/wdt.xml'
+        prefix: '%app.route_prefix%/_wdt'
+        stateless: false
+
+    web_profiler_profiler:
+        resource: '@WebProfilerBundle/Resources/config/routing/profiler.xml'
+        prefix: '%app.route_prefix%/_profiler'
+        stateless: false
+
+when@test:
+    web_profiler_wdt:
+        resource: '@WebProfilerBundle/Resources/config/routing/wdt.xml'
+        prefix: '%app.route_prefix%/_wdt'
+        stateless: false
+
+    web_profiler_profiler:
+        resource: '@WebProfilerBundle/Resources/config/routing/profiler.xml'
+        prefix: '%app.route_prefix%/_profiler'
+        stateless: false
