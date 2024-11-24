@@ -60,4 +60,23 @@ class MarkerService
             'uid' => new Ulid($uid),
         ]);
     }
+
+    public function createMarker(
+        string $latitude,
+        string $longitude,
+        string $type,
+        ?string $description,
+    ): Marker {
+        $marker = Marker::create(
+            latitude: $latitude,
+            longitude: $longitude,
+            type: $type,
+            shortDescription: $description,
+            description: $description,
+        );
+
+        $marker->setStatus(Marker::STATUS_WAITING_APPROVE);
+
+        return $this->markerRepository->save($marker);
+    }
 }

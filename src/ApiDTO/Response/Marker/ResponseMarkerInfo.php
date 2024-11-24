@@ -3,6 +3,7 @@
 namespace App\ApiDTO\Response\Marker;
 
 use ApiPlatform\Metadata\ApiProperty;
+use App\Entity\Marker;
 
 class ResponseMarkerInfo
 {
@@ -14,7 +15,7 @@ class ResponseMarkerInfo
         public string $type,
 
         #[ApiProperty(example: 'paper box')]
-        public string $name,
+        public ?string $name,
 
         #[ApiProperty(example: 'Best paper box')]
         public ?string $description,
@@ -25,5 +26,17 @@ class ResponseMarkerInfo
         public MarkerLocation $location,
 
     ) {
+    }
+
+    public static function create(Marker $marker): self
+    {
+        return new self(
+            uid: $marker->getUid(),
+            type: $marker->getType(),
+            name: $marker->getName(),
+            description: $marker->getDescription(),
+            imageUrl: $marker->getImageUrl(),
+            location: new MarkerLocation($marker->getLat(), $marker->getLng()),
+        );
     }
 }

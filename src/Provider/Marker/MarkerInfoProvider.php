@@ -55,14 +55,7 @@ class MarkerInfoProvider implements ProviderInterface
             throw new ObjectNotFoundHttpException('Marker not found.');
         }
 
-        $markerItemResponse = new ResponseMarkerInfo(
-            uid: $marker->getUid(),
-            type: $marker->getType(),
-            name: $marker->getName(),
-            description: $marker->getDescription(),
-            imageUrl: $marker->getImageUrl(),
-            location: new MarkerLocation($marker->getLat(), $marker->getLng()),
-        );
+        $markerItemResponse = ResponseMarkerInfo::create($marker);
 
         $this->redisService->setObject($redisKey, $markerItemResponse, MomentHelper::SECONDS_WEEK, false);
 

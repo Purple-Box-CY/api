@@ -143,16 +143,44 @@ class Marker
     }
 
     public static function create(
-        User    $user,
-        ?string $type = null,
+        string $latitude,
+        string $longitude,
+        string $type = null,
         ?string $name = null,
+        ?string $shortDescription = null,
         ?string $description = null,
     ): static {
         $post = new Marker();
         $post
-            ->setUser($user)
+            ->setLatitude($latitude)
+            ->setLongitude($longitude)
+            ->setName($name)
             ->setType($type)
-            ->setDescription($description);
+            ->setShortDescription($shortDescription)
+            ->setDescription($description)
+        ;
+
+
+        switch ($type) {
+            case self::TYPE_CLOTH:
+                $post->setIsCloth(true);
+                break;
+            case self::TYPE_BATTERY:
+                $post->setIsBattery(true);
+                break;
+            case self::TYPE_GLASS:
+                $post->setIsGlass(true);
+                break;
+            case self::TYPE_PLASTIC:
+                $post->setIsPlastic(true);
+                break;
+            case self::TYPE_ELECTRONIC:
+                $post->setIsElectronic(true);
+                break;
+            case self::TYPE_GREENPOINT:
+                $post->setIsGreenPoint(true);
+                break;
+        }
 
         return $post;
     }
