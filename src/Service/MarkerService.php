@@ -45,8 +45,10 @@ class MarkerService
                 case Marker::TYPE_PAPER:
                     $criteria['isPaper'] = true;
                     break;
+                case Marker::TYPE_MULTIBOX:
+                    $criteria['type'] = $type;
+                    break;
             }
-            //$criteria['type'] = $type;
         }
 
         return $this->markerRepository->findBy($criteria);
