@@ -10,19 +10,27 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiDTO\Response\Marker\ResponseMarkerShort;
 use App\Entity\Marker;
 use App\Exception\Http\NotFound\ObjectNotFoundHttpException;
+use App\Service\Infrastructure\RedisKeys;
+use App\Service\Infrastructure\RedisService;
 use App\Service\MarkerService;
+use App\Service\Utility\MomentHelper;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class MarkersProvider implements ProviderInterface
 {
     public function __construct(
         private readonly MarkerService $markerService,
-        private readonly RequestStack    $requestStack,
+        private readonly RedisService  $redisService,
+        private readonly RequestStack  $requestStack,
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ResponseMarkerList
-    {
+    public function provide(
+        Operation $operation,
+        array     $uriVariables = [],
+        array     $context = []
+    ): ResponseMarkerList {
         if ($operation instanceof CollectionOperationInterface) {
             throw new \RuntimeException('Not supported.');
         }
@@ -33,6 +41,14 @@ class MarkersProvider implements ProviderInterface
             $type = null;
         }
 
+        $redisKey = sprintf(RedisKeys::KEY_MARKERS, $type ?: 'all');
+        $markersItems = $this->redisService->getObjects($redisKey);
+        if ($markersItems) {
+            return ResponseMarkerList::create(
+                markers: $markersItems,
+            );
+        }
+
         try {
             $markers = $this->markerService->getMarkers(
                 type: $type,
@@ -41,9 +57,9 @@ class MarkersProvider implements ProviderInterface
             throw new ObjectNotFoundHttpException($e->getMessage() ?? 'Failed to get markers');
         }
 
-        $responseMarkers = [];
+        $markersItems = [];
         foreach ($markers as $marker) {
-            $responseMarkers[]= new ResponseMarkerShort(
+            $markersItems[] = new ResponseMarkerShort(
                 uid: $marker->getUid(),
                 type: $marker->getType(),
                 name: $marker->getName(),
@@ -53,8 +69,10 @@ class MarkersProvider implements ProviderInterface
             );
         }
 
+        $this->redisService->setObjects($redisKey, $markersItems, MomentHelper::SECONDS_WEEK);
+
         return ResponseMarkerList::create(
-            markers: $responseMarkers,
+            markers: $markersItems,
         );
     }
 }
