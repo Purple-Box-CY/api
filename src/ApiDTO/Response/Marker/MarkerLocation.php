@@ -11,7 +11,7 @@ class MarkerLocation
         public float $lat,
 
         #[ApiProperty(example: 32.418863693095325)]
-        public ?int $lng,
+        public float $lng,
 
     ) {
     }
