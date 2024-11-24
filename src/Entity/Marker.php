@@ -84,6 +84,9 @@ class Marker
     #[ORM\Column(type: Types::STRING, length: 64, nullable: true)]
     private ?string $type = null;
 
+    #[ORM\Column(type: Types::STRING, length: 64, nullable: true)]
+    private ?string $location = null;
+
     #[ORM\Column(type: Types::STRING, length: 32, nullable: false)]
     private string $latitude;
 
@@ -495,6 +498,18 @@ class Marker
     public function setLongitude(string $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): Marker
+    {
+        $this->location = $location;
 
         return $this;
     }
