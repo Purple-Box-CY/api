@@ -15,6 +15,7 @@ class RedisKeys
 
     public const string KEY_ARTICLE_ITEM = 'article:%s'; //alias
     public const string KEY_MARKERS = 'markers:%s';
+    public const string KEY_MARKER = 'marker:%s';
 
     public const string KEY_JWT_ITEM     = '%s';         //email
     public const string KEY_USER_ITEM    = '%s:profile'; //uid|username|id

@@ -5,7 +5,9 @@ namespace App\Controller;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\OpenApi\Model\Operation;
-use App\ApiDTO\Response\Article\ArticleResponse;
+use App\ApiDTO\Response\Marker\ResponseMarkerInfo;
+use App\ApiDTO\Response\Marker\ResponseMarkerList;
+use App\Provider\Marker\MarkerInfoProvider;
 use App\Provider\Marker\MarkersProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -18,8 +20,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
                 summary: 'Markers',
                 description: 'Markers',
             ),
-            output: ArticleResponse::class,
+            output: ResponseMarkerList::class,
             provider: MarkersProvider::class,
+        ),
+        new Get(
+            uriTemplate: '/markers/{uid}',
+            openapi: new Operation(
+                summary: 'Marker info',
+                description: 'Marker info',
+            ),
+            output: ResponseMarkerInfo::class,
+            provider: MarkerInfoProvider::class,
         ),
     ],
 )]
