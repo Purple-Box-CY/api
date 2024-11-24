@@ -23,7 +23,30 @@ class MarkerService
         ];
 
         if ($type) {
-            $criteria['type'] = $type;
+            switch ($type) {
+                case Marker::TYPE_GREENPOINT:
+                    $criteria['isGreenPoint'] = true;
+                break;
+                case Marker::TYPE_CLOTH:
+                    $criteria['isCloth'] = true;
+                    break;
+                case Marker::TYPE_BATTERY:
+                    $criteria['isBattery'] = true;
+                    break;
+                case Marker::TYPE_ELECTRONIC:
+                    $criteria['isElectronic'] = true;
+                    break;
+                case Marker::TYPE_GLASS:
+                    $criteria['isGlass'] = true;
+                    break;
+                case Marker::TYPE_PLASTIC:
+                    $criteria['isPlastic'] = true;
+                    break;
+                case Marker::TYPE_PAPER:
+                    $criteria['isPaper'] = true;
+                    break;
+            }
+            //$criteria['type'] = $type;
         }
 
         return $this->markerRepository->findBy($criteria);
