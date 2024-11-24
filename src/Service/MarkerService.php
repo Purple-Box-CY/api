@@ -42,6 +42,9 @@ class MarkerService
                 case Marker::TYPE_PLASTIC:
                     $criteria['isPlastic'] = true;
                     break;
+                case Marker::TYPE_PAPER:
+                    $criteria['isPaper'] = true;
+                    break;
             }
             //$criteria['type'] = $type;
         }
