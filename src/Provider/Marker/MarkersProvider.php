@@ -42,7 +42,7 @@ class MarkersProvider implements ProviderInterface
         }
 
         $redisKey = sprintf(RedisKeys::KEY_MARKERS, $type ?: 'all');
-        $markersItems = $this->redisService->getObjects($redisKey);
+        $markersItems = $this->redisService->getObjects($redisKey, false);
         if ($markersItems) {
             return ResponseMarkerList::create(
                 markers: $markersItems,
@@ -69,7 +69,7 @@ class MarkersProvider implements ProviderInterface
             );
         }
 
-        $this->redisService->setObjects($redisKey, $markersItems, MomentHelper::SECONDS_WEEK);
+        $this->redisService->setObjects($redisKey, $markersItems, MomentHelper::SECONDS_WEEK, false);
 
         return ResponseMarkerList::create(
             markers: $markersItems,
