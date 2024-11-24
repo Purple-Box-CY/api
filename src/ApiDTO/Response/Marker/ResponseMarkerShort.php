@@ -14,7 +14,7 @@ class ResponseMarkerShort
         public string $type,
 
         #[ApiProperty(example: 'paper box')]
-        public string $name,
+        public ?string $name,
 
         #[ApiProperty(example: 'Best paper box')]
         public ?string $description,
