@@ -22,6 +22,8 @@ class ResponseMarkerShort
         #[ApiProperty(example: 'https://api.challengerhub.pro/api/public/uploads/preview/01he51ce48ckawev095qjsqw4g.png')]
         public ?string $imageUrl,
 
+        public MarkerLocation $location,
+
     ) {
     }
 }
