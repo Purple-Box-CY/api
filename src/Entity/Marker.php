@@ -88,7 +88,7 @@ class Marker
     private string $latitude;
 
     #[ORM\Column(type: Types::STRING, length: 32, nullable: false)]
-    private float $longitude;
+    private string $longitude;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $shortDescription = null;
@@ -442,6 +442,11 @@ class Marker
         return $this->latitude;
     }
 
+    public function getLat(): float
+    {
+        return (float)$this->latitude;
+    }
+
     public function setLatitude(string $latitude): self
     {
         $this->latitude = $latitude;
@@ -452,6 +457,11 @@ class Marker
     public function getLongitude(): string
     {
         return $this->longitude;
+    }
+
+    public function getLng(): float
+    {
+        return (float)$this->longitude;
     }
 
     public function setLongitude(string $longitude): self

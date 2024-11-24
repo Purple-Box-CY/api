@@ -2,6 +2,7 @@
 
 namespace App\Provider\Marker;
 
+use App\ApiDTO\Response\Marker\MarkerLocation;
 use App\ApiDTO\Response\Marker\ResponseMarkerList;
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -48,6 +49,7 @@ class MarkersProvider implements ProviderInterface
                 name: $marker->getName(),
                 description: $marker->getShortDescription(),
                 imageUrl: $marker->getImageUrl(),
+                location: new MarkerLocation($marker->getLat(), $marker->getLng()),
             );
         }
 
