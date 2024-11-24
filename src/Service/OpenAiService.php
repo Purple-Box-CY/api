@@ -39,7 +39,7 @@ class OpenAiService
                             'text' => "Analyze the provided image and determine if it contains an eco-box.
                     Eco-boxes are containers designed for collecting specific types of waste,
                     such as plastic, used batteries, or old clothing. If the image contains an eco-box,
-                    identify its specific category from the following list: {$possibleCategories}.
+                    identify its specific category from the following list: ['paper', 'glass', 'plastic', 'cloth', 'electronic', 'battery', 'multibox'],
                     Select only one category from the list. It must be from the list and no other.
                     If the object is not an eco-box or its category cannot be clearly identified,
                     answer 'None'.",
@@ -61,8 +61,16 @@ class OpenAiService
                         'properties' => [
                             'value' => [
                                 'type' => 'string',
-                                'description' => "This value must be one of the following: {$possibleCategories}, or 'None'. Just one word.",
-                                'enum' => array_merge(explode(', ', $possibleCategories), ['None']),
+                                'description' => "This value must be one of the following: {$possibleCategories}, or 'None'. Just one word. Must be one of the predefined values.",
+                                "enum" => [
+                                    "paper",
+                                    "glass",
+                                    "plastic",
+                                    "cloth",
+                                    "electronic",
+                                    "battery",
+                                    "multibox"
+                                ]
                             ],
                         ],
                         'required' => ['value'],
