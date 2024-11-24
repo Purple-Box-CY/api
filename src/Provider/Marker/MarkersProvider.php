@@ -14,7 +14,6 @@ use App\Service\Infrastructure\RedisKeys;
 use App\Service\Infrastructure\RedisService;
 use App\Service\MarkerService;
 use App\Service\Utility\MomentHelper;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class MarkersProvider implements ProviderInterface
