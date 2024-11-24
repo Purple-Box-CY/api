@@ -38,11 +38,18 @@ class OpenAiService
                             'type' => 'text',
                             'text' => "Analyze the provided image and determine if it contains an eco-box.
                     Eco-boxes are containers designed for collecting specific types of waste,
-                    such as plastic, used batteries, or old clothing. If the image contains an eco-box,
-                    identify its specific category from the following list: ['paper', 'glass', 'plastic', 'cloth', 'electronic', 'battery', 'multibox'],
+                    such as plastic, used batteries, or old clothing.
+                    - **Paper:** Containers labeled for collecting paper waste, such as newspapers, magazines, or cardboard (USUALLY BROWN COLOR).
+                    - **Glass:** Containers designed for collecting glass bottles or jars, often with a distinct label or color (USUALLY GREEN COLOR).
+                    - **Plastic:** Containers used for plastic items such as bottles, packaging, or bags. These are often marked with a recycling symbol (USUALLY BLUE COLOR).
+                    - **Cloth:** Containers for old clothing, fabrics, or textiles, usually labeled with images of clothes or text indicating textile recycling (USUALLY PURPLE COLOR).
+                    - **Electronic:** Special containers for electronic waste, like old phones, laptops, or other gadgets. Often marked with electronic symbols (USUALLY TRANSPARENT OR WHITE COLOR).
+                    - **Battery:** Containers for used batteries, typically small and clearly labeled with battery icons (USUALLY TRANSPARENT OR WHITE COLOR).
+                    - **Multibox:** A universal container that accepts multiple types of waste, often partitioned or labeled for multiple categories.
+                    If the image contains an eco-box, identify its specific category from the following list: ['paper', 'glass', 'plastic', 'cloth', 'electronic', 'battery', 'multibox', 'none'],
                     Select only one category from the list. It must be from the list and no other.
                     If the object is not an eco-box or its category cannot be clearly identified,
-                    answer 'None'.",
+                    answer 'none'.",
                         ],
                         [
                             'type' => 'image_url',
@@ -53,30 +60,34 @@ class OpenAiService
                     ],
                 ],
             ],
-            'functions' => [
-                [
-                    'name' => 'single_string_type',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'value' => [
-                                'type' => 'string',
-                                'description' => "This value must be one of the following: {$possibleCategories}, or 'None'. Just one word. Must be one of the predefined values.",
-                                "enum" => [
-                                    "paper",
-                                    "glass",
-                                    "plastic",
-                                    "cloth",
-                                    "electronic",
-                                    "battery",
-                                    "multibox"
-                                ]
+            'response_format' => [
+                "type" => "json_schema",
+                "json_schema" =>
+                    [
+                        'name' => 'single_string_type',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'value' => [
+                                    'type' => 'string',
+                                    'description' => "This value must be one of the following: {$possibleCategories}, or 'None'. Just one word. Must be one of the predefined values.",
+                                    "enum" => [
+                                        "paper",
+                                        "glass",
+                                        "plastic",
+                                        "cloth",
+                                        "electronic",
+                                        "battery",
+                                        "multibox",
+                                        "none"
+                                    ]
+                                ],
                             ],
+                            'required' => ['value'],
+                            'additionalProperties' => false,
                         ],
-                        'required' => ['value'],
-                        'additionalProperties' => false,
+                        "strict" => true
                     ],
-                ],
             ],
         ];
 
@@ -105,27 +116,32 @@ class OpenAiService
             throw new \Exception("Invalid response structure from OpenAI: {$response}");
         }
 
-        $detectedCategory = $responseArray['choices'][0]['message']['content'];
+        $content = $responseArray['choices'][0]['message']['content'];
 
-        if ($detectedCategory === 'None') {
+        $decodedContent = json_decode($content, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !isset($decodedContent['value'])) {
+            throw new \Exception("Expected JSON with 'value' field in content: {$content}");
+        }
+
+        $detectedCategory = $decodedContent['value'];
+
+        if ($detectedCategory === 'none') {
             return ['category' => 'None', 'value' => null];
         }
 
-//        if (!array_key_exists($detectedCategory, $this->categoryDefinitions)) {
-//            throw new \Exception("Unexpected category detected: {$detectedCategory}");
-//        }
-        if ($detectedCategory !== 'None') {
-            $mappedValue = $this->categoryDefinitions[strtolower($detectedCategory)] ?? null;
-        } else {
-            $mappedValue = null;
-        }
+        $mappedValue = $this->categoryDefinitions[strtolower($detectedCategory)] ?? null;
 
+        if ($mappedValue === null) {
+            throw new \Exception("Unexpected category detected: {$detectedCategory}");
+        }
 
         return [
             'category' => $detectedCategory,
             'value' => $mappedValue,
         ];
+
     }
+
 
     public function processImageTrash(string $imageBase64): array
     {
@@ -140,16 +156,16 @@ class OpenAiService
                         [
                             'type' => 'text',
                             'text' => "Analyze the provided image and determine the type of trash shown.
-Trash types include:
-- **Paper:** Items like newspapers, magazines, or cardboard.
-- **Glass:** Bottles or jars, typically green containers.
-- **Plastic:** Bottles, packaging, or bags, often blue containers.
-- **Cloth:** Fabrics, clothing, or textiles, usually in purple containers.
-- **Electronic:** Gadgets like phones, laptops, or old electronics, usually in white containers.
-- **Battery:** Used batteries, often collected in transparent containers.
-If the image does not clearly show trash or its type cannot be confidently determined, answer 'none'.
+                            Trash types include:
+                            - **Paper:** Items like newspapers, magazines, or cardboard.
+                            - **Glass:** Bottles or jars, typically green containers.
+                            - **Plastic:** Bottles, packaging, or bags, often blue containers.
+                            - **Cloth:** Fabrics, clothing, or textiles, usually in purple containers.
+                            - **Electronic:** Gadgets like phones, laptops, or old electronics, usually in white containers.
+                            - **Battery:** Used batteries, often collected in transparent containers.
+                            If the image does not clearly show trash or its type cannot be confidently determined, answer 'none'.
 
-Return the identified type of trash from the list [$possibleCategories] and provide the probability score (0 to 1) for your classification.",
+                            Return the identified type of trash from the list [$possibleCategories] and provide the probability score (0 to 1) for your classification.",
                         ],
                         [
                             'type' => 'image_url',
@@ -226,7 +242,7 @@ Return the identified type of trash from the list [$possibleCategories] and prov
         }
 
         $category = strtolower($content['category']);
-        $probability = (float) $content['probability'];
+        $probability = (float)$content['probability'];
 
         // Маппинг контейнеров для категорий
         $containerMap = [
