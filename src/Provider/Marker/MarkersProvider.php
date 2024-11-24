@@ -14,6 +14,7 @@ use App\Service\Infrastructure\RedisKeys;
 use App\Service\Infrastructure\RedisService;
 use App\Service\MarkerService;
 use App\Service\Utility\MomentHelper;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class MarkersProvider implements ProviderInterface
@@ -29,7 +30,7 @@ class MarkersProvider implements ProviderInterface
         Operation $operation,
         array     $uriVariables = [],
         array     $context = []
-    ): ResponseMarkerList {
+    ): ResponseMarkerList|JsonResponse {
         if ($operation instanceof CollectionOperationInterface) {
             throw new \RuntimeException('Not supported.');
         }
@@ -43,8 +44,10 @@ class MarkersProvider implements ProviderInterface
         $redisKey = sprintf(RedisKeys::KEY_MARKERS, $type ?: 'all');
         $markersItems = $this->redisService->getObjects($redisKey, false);
         if ($markersItems) {
-            return ResponseMarkerList::create(
-                markers: $markersItems,
+            return new JsonResponse(
+                data: ResponseMarkerList::create(
+                    markers: $markersItems,
+                ),
             );
         }
 
